@@ -59,10 +59,12 @@ class JState:
 
 def search(start):
     class Node:
+        count = 0
         def __init__(self, state, creator, parent):
             self.state = state
             self.creator = creator
             self.parent = parent
+            Node.count = Node.count + 1 # ez itt időbonyolultság lesz. Garbage kollektoros nyelvek esetén nehéz tárbonyolultságot írni
 
     # 1
     leaves = [Node(start, None, None)]
@@ -72,9 +74,10 @@ def search(start):
     # 2. feltétel vizsgálat
     while len(leaves) > 0:
         # 3.
-        selected = leaves.pop()  # ez egy mélységi kereső --> FIFO <== a pop operátor alapértelmezetten az utolsó helyre rakja az elemet
+        selected = leaves.pop(0)  # ez egy mélységi kereső --> FIFO <== a pop operátor alapértelmezetten az utolsó helyre rakja az elemet
         # 4.
         if selected.state.is_goal():
+            print(Node.count)
             return selected  # VÉGE, megoldást találtunk
         # 5.
         if selected.state not in expanded:
