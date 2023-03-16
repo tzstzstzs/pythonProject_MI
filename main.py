@@ -88,13 +88,75 @@ def search(start):
     return None  # VÉGE, nem találtunk megoldást
 
 
-print(search(JState()).creator)
+#print(search(JState()).creator)
 
-goal = search(JState())
-if not goal == None:
-    solution = []
-    while not goal.parent == None:
-        solution.insert(0, goal.creator)
-        goal = goal.parent
-    print(solution)
+# goal = search(JState())
+# if not goal == None:
+#     solution = []
+#     while not goal.parent == None:
+#         solution.insert(0, goal.creator)
+#         goal = goal.parent
+#     print(solution)
 
+
+class QOperator:
+    def __init__(self, i):
+        self.i = i
+
+    def is_applicable(self, state):
+        m = state.m()
+        a = state.a
+        for k in range(1, m):
+            if a[k] == self.i or abs(a[k]-self.i) == abs(k-m):
+                return False
+        return True
+
+    def apply(self, state):
+        m = state.m()
+        a = state.a
+        new = QState(state.n)
+        b = new.a
+        for k in range(1, state.n+1):
+            b[k] = self.i if k == m else a[k]
+        return new
+
+
+class QState:
+
+    def successors(self):
+        result = []
+        for op in [QOperator(i) for i in range(1, self.n+1)]:
+            if op.is_applicable(self):
+                result.append((op.apply(self), op))
+        return result
+
+    def __init__(self, n):
+        self.n = n
+        self.a = [0] * (n+1)
+
+    def m(self):
+        for i in range(1, self.n+1):
+            if self.a[i] == 0:
+                return i
+
+    def is_goal(self):
+        return self.a[self.n] > 0
+
+    def __repr__(self):
+        return self.a.__repr__()
+
+
+
+#print(search(QState(14)).state)
+
+
+def backtrack(state):
+    if state.is_goal():
+        return state
+    for k in state.successors():
+        result = backtrack(k[0])
+        if not result == None:
+            return result
+    return None
+
+print(backtrack(QState(20)))
