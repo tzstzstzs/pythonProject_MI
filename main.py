@@ -155,8 +155,30 @@ def backtrack(state):
         return state
     for k in state.successors():
         result = backtrack(k[0])
-        if not result == None:
+        if result:
             return result
     return None
 
-print(backtrack(QState(20)))
+
+def backtrack2(state, limit):
+    if state.is_goal():
+        return state
+    if limit > 0:
+        for k in state.successors():
+            result = backtrack2(k[0], limit-1)
+            if result:
+                return result
+    return None
+
+
+def backtrack3(state):
+    limit = 0
+    while True:
+        print(limit)
+        result = backtrack2(state, limit) # a backtrack2-t használja egyre nagyobb limittel
+        if result:
+            return result
+        limit = limit + 1
+
+
+print(backtrack3(QState(20)))
